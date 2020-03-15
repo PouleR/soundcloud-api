@@ -14,6 +14,7 @@ class SoundCloudAPI
 
     /**
      * SoundCloudAPI constructor.
+     *
      * @param SoundCloudClient $client
      */
     public function __construct(SoundCloudClient $client)
@@ -22,30 +23,30 @@ class SoundCloudAPI
     }
 
     /**
-     * @param int $userId
+     * Get a user
+     * https://developers.soundcloud.com/docs/api/reference#users
+     *
+     * @param int|null $userId
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function getUser(int $userId)
+    public function getUser(?int $userId = null)
     {
-        $url = sprintf('users/%d', $userId);
+        $url = 'me';
+
+        if (null !== $userId) {
+            $url = sprintf('users/%d', $userId);
+        }
 
         return $this->client->apiRequest('GET', $url);
     }
 
     /**
-     * @return array|object
+     * Get a track
+     * https://developers.soundcloud.com/docs/api/reference#tracks
      *
-     * @throws SoundCloudAPIException
-     */
-    public function getCurrentUser()
-    {
-        return $this->client->apiRequest('GET', 'me');
-    }
-
-    /**
      * @param int $trackId
      *
      * @return array|object
@@ -60,30 +61,30 @@ class SoundCloudAPI
     }
 
     /**
-     * @param int $userId
+     * List of tracks of the user
+     * https://developers.soundcloud.com/docs/api/reference#users
+     *
+     * @param int|null $userId
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function getTracksForUser(int $userId)
+    public function getTracks(?int $userId = null)
     {
-        $url = sprintf('users/%d/tracks', $userId);
+        $url = sprintf('me/tracks');
+
+        if (null !== $userId) {
+            $url = sprintf('users/%d/tracks', $userId);
+        }
 
         return $this->client->apiRequest('GET', $url);
     }
 
     /**
-     * @return array|object
+     * Follow a user
+     * https://developers.soundcloud.com/docs/api/reference#me
      *
-     * @throws SoundCloudAPIException
-     */
-    public function getTracksForCurrentUser()
-    {
-        return $this->client->apiRequest('GET', 'me/tracks');
-    }
-
-    /**
      * @param int $userId
      *
      * @return array|object
@@ -98,6 +99,9 @@ class SoundCloudAPI
     }
 
     /**
+     * Unfollow a user
+     * https://developers.soundcloud.com/docs/api/reference#me
+     *
      * @param int $userId
      *
      * @return array|object
@@ -109,5 +113,18 @@ class SoundCloudAPI
         $url = sprintf('me/followings/%d', $userId);
 
         return $this->client->apiRequest('DELETE', $url);
+    }
+
+    /**
+     * List of users who are followed by the user
+     * https://developers.soundcloud.com/docs/api/reference#me
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function getFollowings()
+    {
+        return $this->client->apiRequest('GET', 'me/followings');
     }
 }
