@@ -16,3 +16,25 @@ Install it using [Composer](https://getcomposer.org/):
 ```sh
 composer require pouler/soundcloud-api
 ```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$curl = new \Symfony\Component\HttpClient\CurlHttpClient();
+$client = new PouleR\SoundCloudAPI\SoundCloudClient($curl);
+
+$api = new \PouleR\SoundCloudAPI\SoundCloudAPI($client);
+$api->setClientId('client.id');
+
+// Get information about given user
+$api->getUser(123456);
+
+// Get information about current usr
+$api->setAccessToken('access.token');
+$api->getUser();
+
+var_dump($result);
+
+```

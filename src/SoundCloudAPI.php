@@ -23,6 +23,22 @@ class SoundCloudAPI
     }
 
     /**
+     * @param string $accessToken
+     */
+    public function setAccessToken(string $accessToken): void
+    {
+        $this->client->setAccessToken($accessToken);
+    }
+
+    /**
+     * @param string $clientId
+     */
+    public function setClientId(string $clientId): void
+    {
+        $this->client->setClientId($clientId);
+    }
+
+    /**
      * Get a user
      * https://developers.soundcloud.com/docs/api/reference#users
      *
