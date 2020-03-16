@@ -138,18 +138,14 @@ class SoundCloudClient
      */
     public function apiRequest($method, $service, array $headers = [], $body = null)
     {
-        if (strpos($service, 'http') === 0) {
-            $url = $service;
-        } else {
-            $url = sprintf(
-                '%s/%s',
-                self::API_URL,
-                $service
-            );
-        }
+        $url = sprintf(
+            '%s/%s',
+            self::API_URL,
+            $service
+        );
 
         if (empty($this->accessToken) && !empty($this->clientId)) {
-            $url = sprintf('%s?client_id=%s', $url, $this->clientId);
+            $url = sprintf('%s%sclient_id=%s', $url, parse_url($url, PHP_URL_QUERY) ? '&' : '?' ,$this->clientId);
         }
 
         $defaultHeaders = $this->getDefaultHeaders();

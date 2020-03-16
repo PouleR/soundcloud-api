@@ -98,6 +98,53 @@ class SoundCloudAPI
     }
 
     /**
+     * @param int $trackId
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function repostTrack(int $trackId)
+    {
+        $url = sprintf('e1/me/track_reposts/%d', $trackId);
+
+        return $this->client->apiRequest('PUT', $url);
+    }
+
+    /**
+     * @param int $trackId
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function likeTrack(int $trackId)
+    {
+        $url = sprintf('e1/me/track_likes/%d', $trackId);
+
+        return $this->client->apiRequest('PUT', $url);
+    }
+
+    /**
+     * @param int    $trackId
+     * @param string $comment
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function commentOnTrack(int $trackId, string $comment)
+    {
+        $url = sprintf('tracks/%d/comments', $trackId);
+        $data = [
+            'comment[body]' => $comment,
+            'comment[timestamp]' => 0
+        ];
+
+        return $this->client->apiRequest('POST', $url, [], $data);
+    }
+
+    /**
      * Follow a user
      * https://developers.soundcloud.com/docs/api/reference#me
      *
@@ -142,5 +189,22 @@ class SoundCloudAPI
     public function getFollowings()
     {
         return $this->client->apiRequest('GET', 'me/followings');
+    }
+
+    /**
+     * The resolve resource allows you to lookup and access API resources when you only know the SoundCloud.com URL.
+     * https://developers.soundcloud.com/docs/api/reference#resolve
+     *
+     * @param string $url
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function resolveUrl(string $url)
+    {
+        $url = sprintf('resolve?url=%s', $url);
+
+        return $this->client->apiRequest('GET', $url);
     }
 }
