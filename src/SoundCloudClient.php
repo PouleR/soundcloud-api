@@ -145,7 +145,12 @@ class SoundCloudClient
         );
 
         if (empty($this->accessToken) && !empty($this->clientId)) {
-            $url = sprintf('%s%sclient_id=%s', $url, parse_url($url, PHP_URL_QUERY) ? '&' : '?' ,$this->clientId);
+            $url = sprintf(
+                '%s%sclient_id=%s',
+                $url,
+                parse_url($url, PHP_URL_QUERY) ? '&' : '?',
+                $this->clientId
+            );
         }
 
         $defaultHeaders = $this->getDefaultHeaders();
