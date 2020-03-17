@@ -63,15 +63,20 @@ class SoundCloudAPI
      * Get a track
      * https://developers.soundcloud.com/docs/api/reference#tracks
      *
-     * @param int $trackId
+     * @param int         $trackId
+     * @param string|null $secretToken
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function getTrack(int $trackId)
+    public function getTrack(int $trackId, ?string $secretToken = null)
     {
         $url = sprintf('tracks/%d', $trackId);
+
+        if (null !== $secretToken) {
+            $url = sprintf('%s?secret_token=%s', $url, $secretToken);
+        }
 
         return $this->client->apiRequest('GET', $url);
     }
