@@ -212,4 +212,36 @@ class SoundCloudAPI
 
         return $this->client->apiRequest('GET', $url);
     }
+
+    /**
+     * @param int $trackId
+     *
+     * @return string|null
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function getStreamUrl(int $trackId): ?string
+    {
+        if (empty($this->client->getAccessToken())) {
+            return null;
+        }
+
+        $url = sprintf('tracks/%d/stream', $trackId);
+
+        return $this->client->urlRequest('GET', $url);
+    }
+
+    /**
+     * @param string $clientSecret
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function authenticate(string $clientSecret)
+    {
+        $bodyData = sprintf('client_id=%s&client_secret=%s&grant_type=client_credentials', $this->client->getClientId(), $clientSecret);
+
+        return $this->client->apiRequest('POST', 'oauth2/token', ['Content-Type' => 'application/x-www-form-urlencoded'], $bodyData);
+    }
 }

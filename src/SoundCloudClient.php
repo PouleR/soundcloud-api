@@ -175,6 +175,56 @@ class SoundCloudClient
     }
 
     /**
+     * @param string                                      $method
+     * @param string                                      $service
+     * @param array                                       $headers
+     * @param array|string|resource|\Traversable|\Closure $body
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function urlRequest(string $method, string $service, array $headers = [], $body = null): ?string
+    {
+        $url = sprintf(
+            '%s/%s',
+            self::API_URL,
+            $service
+        );
+
+        if (empty($this->accessToken)) {
+            throw new SoundCloudAPIException(
+                sprintf(
+                    'URL Request: %s, %s',
+                    $service,
+                    'No access token was set'
+                ),
+                500
+            );
+        }
+
+        $defaultHeaders = $this->getDefaultHeaders();
+        $headers = array_merge($headers, $defaultHeaders);
+
+        try {
+            $response = $this->httpClient->request($method, $url, ['headers' => $headers, 'body' => $body]);
+            $this->lastHttpStatusCode = $response->getStatusCode();
+
+            return $response->getInfo('url');
+        } catch (ServerExceptionInterface | ClientExceptionInterface | RedirectionExceptionInterface | TransportExceptionInterface $exception) {
+            throw new SoundCloudAPIException(
+                sprintf(
+                    'URL Request: %s, %s (%s)',
+                    $service,
+                    $exception->getMessage(),
+                    $exception->getCode()
+                ),
+                $exception->getCode()
+            );
+        }
+    }
+
+    /**
      * @return array
      */
     protected function getDefaultHeaders(): array
