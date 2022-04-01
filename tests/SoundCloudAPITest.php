@@ -88,6 +88,19 @@ class SoundCloudAPITest extends TestCase
     /**
      * @throws SoundCloudAPIException
      */
+    public function testGetStreamUrlsForTrack(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('GET', 'tracks/555/streams')
+            ->willReturn('{"OK"}');
+
+        self::assertEquals('{"OK"}', $this->api->getStreamUrlsForTrack(555));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
     public function testGetTrackSecretToken(): void
     {
         $this->client->expects(static::once())

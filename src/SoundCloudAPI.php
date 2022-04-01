@@ -109,6 +109,20 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
+    public function getStreamUrlsForTrack(int $trackId)
+    {
+        $url = sprintf('tracks/%d/streams', $trackId);
+
+        return $this->client->apiRequest('GET', $url);
+    }
+
+    /**
+     * @param int $trackId
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
     public function repostTrack(int $trackId)
     {
         $url = sprintf('e1/me/track_reposts/%d', $trackId);

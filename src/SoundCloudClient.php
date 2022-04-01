@@ -157,7 +157,7 @@ class SoundCloudClient
         $headers = array_merge($headers, $defaultHeaders);
 
         try {
-            $response = $this->httpClient->request($method, $url, ['headers' => $headers, 'body' => $body]);
+            $response = $this->httpClient->request($method, $url, ['headers' => $headers, 'body' => $body, 'timeout' => 10]);
             $this->lastHttpStatusCode = $response->getStatusCode();
 
             return json_decode($response->getContent(), $this->responseType === self::RETURN_AS_ASSOC);
