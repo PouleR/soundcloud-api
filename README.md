@@ -6,7 +6,7 @@
 This is a PHP wrapper for the [SoundCloud API](https://developers.soundcloud.com/docs/api/reference).
 
 ## Requirements
-* PHP ^7.3|^8.0
+* PHP >=8.1
 * Symfony HTTP Client
 
 ## Installation
