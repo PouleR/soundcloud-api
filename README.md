@@ -1,7 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/pouler/soundcloud-api/v/stable)](https://packagist.org/packages/pouler/soundcloud-api)
 [![Latest Unstable Version](https://poser.pugx.org/pouler/soundcloud-api/v/unstable)](https://packagist.org/packages/pouler/soundcloud-api)
 
-# SoundCLoud API PHP
+# SoundCloud API PHP
 
 This is a PHP wrapper for the [SoundCloud API](https://developers.soundcloud.com/docs/api/reference).
 
