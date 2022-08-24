@@ -246,6 +246,34 @@ class SoundCloudAPI
     }
 
     /**
+     * Upload a track to SoundCloud on behalf of the user.
+     *
+     * @return array|object|string|null
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function uploadTrack(string $title, string $uploadFilePath)
+    {
+        if (!is_file($uploadFilePath)) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $uploadFilePath));
+        }
+
+        $size = filesize($uploadFilePath);
+
+        if ($size > 500000000) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed 500 MB, current size is %d bytes', $uploadFilePath, $size));
+        }
+
+        $additionalHeaders = ['Content-Type' => 'multipart/form-data'];
+        $data = [
+            'track[title]' => $title,
+            'track[asset_data]' => $uploadFilePath,
+        ];
+
+        return $this->client->urlRequest('POST', 'tracks', $additionalHeaders, $data);
+    }
+
+    /**
      * @param string $clientSecret
      *
      * @return array|object
