@@ -248,29 +248,36 @@ class SoundCloudAPI
     /**
      * Upload a track to SoundCloud on behalf of the user.
      *
-     * @return array|object|string|null
+     * @return bool|string
      *
      * @throws SoundCloudAPIException
      */
-    public function uploadTrack(string $title, string $uploadFilePath)
+    public function uploadTrack(string $title, string $uploadFilePath): bool|string
     {
-        if (!is_file($uploadFilePath)) {
-            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $uploadFilePath));
-        }
+        $ch = curl_init();
 
-        $size = filesize($uploadFilePath);
-
-        if ($size > 500000000) {
-            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed 500 MB, current size is %d bytes', $uploadFilePath, $size));
-        }
-
-        $additionalHeaders = ['Content-Type' => 'multipart/form-data'];
-        $data = [
+        curl_setopt($ch, CURLOPT_URL, 'https://api.soundcloud.com/tracks');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        $post = [
+            'track[asset_data]' => '@' .realpath($uploadFilePath),
             'track[title]' => $title,
-            'track[asset_data]' => $uploadFilePath,
         ];
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 
-        return $this->client->urlRequest('POST', 'tracks', $additionalHeaders, $data);
+        $headers = [];
+        $headers[] = 'Accept: application/json; charset=utf-8';
+        $headers[] = 'Authorization: OAuth '.$this->client->getAccessToken();
+        $headers[] = 'Content-Type: multipart/form-data';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            throw new SoundCloudAPIException('Error:' . curl_error($ch));
+        }
+        curl_close($ch);
+
+        return $result;
     }
 
     /**
