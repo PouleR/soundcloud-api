@@ -2,15 +2,16 @@
 
 namespace PouleR\SoundCloudAPI;
 
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+
 /**
  * Class SoundCloudAPI
  */
 class SoundCloudAPI
 {
-    /**
-     * @var SoundCloudClient
-     */
-    private $client;
+    private const MAX_UPLOAD_SIZE = (500 * 1024 * 1024);
+    private SoundCloudClient $client;
 
     /**
      * SoundCloudAPI constructor.
@@ -257,5 +258,49 @@ class SoundCloudAPI
         $bodyData = sprintf('client_id=%s&client_secret=%s&grant_type=client_credentials', $this->client->getClientId(), $clientSecret);
 
         return $this->client->apiRequest('POST', 'oauth2/token', ['Content-Type' => 'application/x-www-form-urlencoded'], $bodyData);
+    }
+
+    /**
+     * @param string $title
+     * @param string $uploadFilePath
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function uploadTrack(string $title, string $uploadFilePath)
+    {
+        if (!is_file($uploadFilePath)) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $uploadFilePath));
+        }
+
+        $size = filesize($uploadFilePath);
+
+        if ($size > self::MAX_UPLOAD_SIZE) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed %d bytes, current size is %d bytes', $uploadFilePath, self::MAX_UPLOAD_SIZE, $size));
+        }
+
+        $formFields = [
+            'track[title]' => $title,
+            'track[asset_data]' => DataPart::fromPath(realpath($uploadFilePath)),
+        ];
+
+        $formData = new FormDataPart($formFields);
+
+        return $this->client->apiRequest('POST', 'tracks', $formData->getPreparedHeaders()->toArray(), $formData->bodyToIterable());
+    }
+
+    /**
+     * @param int $trackId
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function deleteTrack(int $trackId)
+    {
+        $url = sprintf('tracks/%d', $trackId);
+
+        return $this->client->apiRequest('DELETE', $url);
     }
 }

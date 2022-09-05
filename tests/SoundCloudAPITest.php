@@ -88,6 +88,19 @@ class SoundCloudAPITest extends TestCase
     /**
      * @throws SoundCloudAPIException
      */
+    public function testDeleteTrack(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('DELETE', 'tracks/789')
+            ->willReturn('{"OK"}');
+
+        self::assertEquals('{"OK"}', $this->api->deleteTrack(789));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
     public function testGetStreamUrlsForTrack(): void
     {
         $this->client->expects(static::once())
