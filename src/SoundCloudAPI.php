@@ -262,32 +262,44 @@ class SoundCloudAPI
 
     /**
      * @param string $title
-     * @param string $uploadFilePath
+     * @param string $trackFilePath
+     * @param string $description
+     * @param string $artworkFilePath
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function uploadTrack(string $title, string $uploadFilePath)
+    public function uploadTrack(string $title, string $trackFilePath, string $description = '', string $artworkFilePath = '')
     {
-        if (!is_file($uploadFilePath)) {
-            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $uploadFilePath));
+        if (!is_file($trackFilePath)) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $trackFilePath));
         }
 
-        $size = filesize($uploadFilePath);
+        $size = filesize($trackFilePath);
 
         if ($size > self::MAX_UPLOAD_SIZE) {
-            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed %d bytes, current size is %d bytes', $uploadFilePath, self::MAX_UPLOAD_SIZE, $size));
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed %d bytes, current size is %d bytes', $trackFilePath, self::MAX_UPLOAD_SIZE, $size));
         }
 
         $formFields = [
             'track[title]' => $title,
-            'track[asset_data]' => DataPart::fromPath(realpath($uploadFilePath)),
+            'track[asset_data]' => DataPart::fromPath(realpath($trackFilePath)),
+            'track[description]' => $description
         ];
+
+        if (!empty($artworkFilePath)) {
+            $formFields['track[artwork_data]'] = DataPart::fromPath(realpath($artworkFilePath));
+        }
 
         $formData = new FormDataPart($formFields);
 
-        return $this->client->apiRequest('POST', 'tracks', $formData->getPreparedHeaders()->toArray(), $formData->bodyToIterable());
+        return $this->client->apiRequest(
+            'POST',
+            'tracks',
+            $formData->getPreparedHeaders()->toArray(),
+            $formData->bodyToIterable()
+        );
     }
 
     /**
