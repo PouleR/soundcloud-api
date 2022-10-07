@@ -228,6 +228,54 @@ class SoundCloudAPI
     }
 
     /**
+     * Search for tracks
+     *
+     * @param string $query
+     *
+     * @return object|array
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function searchTracks(string $query): object|array
+    {
+        $searchUrl = sprintf('tracks?q=%s', urlencode($query));
+
+        return $this->client->apiRequest('GET', $searchUrl);
+    }
+
+    /**
+     * Search for playlists
+     *
+     * @param string $query
+     *
+     * @return object|array
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function searchPlaylists(string $query): object|array
+    {
+        $searchUrl = sprintf('playlists?q=%s', urlencode($query));
+
+        return $this->client->apiRequest('GET', $searchUrl);
+    }
+
+    /**
+     * Search for users
+     *
+     * @param string $query
+     *
+     * @return object|array
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function searchUsers(string $query): object|array
+    {
+        $searchUrl = sprintf('users?q=%s', urlencode($query));
+
+        return $this->client->apiRequest('GET', $searchUrl);
+    }
+
+    /**
      * @param int $trackId
      *
      * @return string|null

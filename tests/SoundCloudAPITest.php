@@ -222,4 +222,43 @@ class SoundCloudAPITest extends TestCase
 
         self::assertEquals('{}', $this->api->resolveUrl('https://soundcloud.com/test'));
     }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
+    public function testSearchTracks(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('GET', 'tracks?q=searchquery')
+            ->willReturn([]);
+
+        self::assertIsArray($this->api->searchTracks('searchquery'));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
+    public function testSearchPlaylists(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('GET', 'playlists?q=searchquery')
+            ->willReturn([]);
+
+        self::assertIsArray($this->api->searchPlaylists('searchquery'));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
+    public function testSearchUsers(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('GET', 'users?q=searchquery')
+            ->willReturn([]);
+
+        self::assertIsArray($this->api->searchUsers('searchquery'));
+    }
 }
