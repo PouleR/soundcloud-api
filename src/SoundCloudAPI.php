@@ -11,16 +11,12 @@ use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 class SoundCloudAPI
 {
     private const MAX_UPLOAD_SIZE = (500 * 1024 * 1024);
-    private SoundCloudClient $client;
 
     /**
-     * SoundCloudAPI constructor.
-     *
      * @param SoundCloudClient $client
      */
-    public function __construct(SoundCloudClient $client)
+    public function __construct(private SoundCloudClient $client)
     {
-        $this->client = $client;
     }
 
     /**
@@ -255,9 +251,47 @@ class SoundCloudAPI
      */
     public function authenticate(string $clientSecret)
     {
-        $bodyData = sprintf('client_id=%s&client_secret=%s&grant_type=client_credentials', $this->client->getClientId(), $clientSecret);
+        $bodyData = sprintf(
+            'client_id=%s&client_secret=%s&grant_type=client_credentials',
+            $this->client->getClientId(),
+            $clientSecret
+        );
 
-        return $this->client->apiRequest('POST', 'oauth2/token', ['Content-Type' => 'application/x-www-form-urlencoded'], $bodyData);
+        return $this->client->apiRequest(
+            'POST',
+            'oauth2/token',
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            $bodyData
+        );
+    }
+
+    /**
+     * @param string $clientSecret
+     * @param string $refreshToken
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function refreshToken(string $clientSecret, string $refreshToken)
+    {
+        $bodyData = sprintf(
+            'client_id=%s&client_secret=%s&grant_type=refresh_token&refresh_token=%s',
+            $this->client->getClientId(),
+            $clientSecret,
+            $refreshToken
+        );
+
+        return $this->client->apiRequest(
+            'POST',
+            'oauth2/token',
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            $bodyData
+        );
     }
 
     /**
