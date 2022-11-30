@@ -88,6 +88,19 @@ class SoundCloudAPITest extends TestCase
     /**
      * @throws SoundCloudAPIException
      */
+    public function testDeleteTrack(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with('DELETE', 'tracks/789')
+            ->willReturn('{"OK"}');
+
+        self::assertEquals('{"OK"}', $this->api->deleteTrack(789));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
     public function testGetStreamUrlsForTrack(): void
     {
         $this->client->expects(static::once())
@@ -209,7 +222,6 @@ class SoundCloudAPITest extends TestCase
         self::assertEquals('{}', $this->api->getFollowings());
     }
 
-
     /**
      * @throws SoundCloudAPIException
      */
@@ -260,5 +272,39 @@ class SoundCloudAPITest extends TestCase
             ->willReturn([]);
 
         self::assertIsArray($this->api->searchUsers('searchquery'));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
+    public function testAuthenticate(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with(
+                'POST',
+                'oauth2/token',
+                ['Content-Type' => 'application/x-www-form-urlencoded'],
+                'client_id=&client_secret=secret&grant_type=client_credentials'
+            )->willReturn('{}');
+
+        self::assertEquals('{}', $this->api->authenticate('secret'));
+    }
+
+    /**
+     * @throws SoundCloudAPIException
+     */
+    public function testRefreshToken(): void
+    {
+        $this->client->expects(static::once())
+            ->method('apiRequest')
+            ->with(
+                'POST',
+                'oauth2/token',
+                ['Content-Type' => 'application/x-www-form-urlencoded'],
+                'client_id=&client_secret=secret&grant_type=refresh_token&refresh_token=refresh'
+            )->willReturn('{}');
+
+        self::assertEquals('{}', $this->api->refreshToken('secret', 'refresh'));
     }
 }

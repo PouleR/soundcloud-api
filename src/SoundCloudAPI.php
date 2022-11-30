@@ -2,24 +2,21 @@
 
 namespace PouleR\SoundCloudAPI;
 
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+
 /**
  * Class SoundCloudAPI
  */
 class SoundCloudAPI
 {
-    /**
-     * @var SoundCloudClient
-     */
-    private $client;
+    private const MAX_UPLOAD_SIZE = (500 * 1024 * 1024);
 
     /**
-     * SoundCloudAPI constructor.
-     *
      * @param SoundCloudClient $client
      */
-    public function __construct(SoundCloudClient $client)
+    public function __construct(private SoundCloudClient $client)
     {
-        $this->client = $client;
     }
 
     /**
@@ -302,8 +299,102 @@ class SoundCloudAPI
      */
     public function authenticate(string $clientSecret)
     {
-        $bodyData = sprintf('client_id=%s&client_secret=%s&grant_type=client_credentials', $this->client->getClientId(), $clientSecret);
+        $bodyData = sprintf(
+            'client_id=%s&client_secret=%s&grant_type=client_credentials',
+            $this->client->getClientId(),
+            $clientSecret
+        );
 
-        return $this->client->apiRequest('POST', 'oauth2/token', ['Content-Type' => 'application/x-www-form-urlencoded'], $bodyData);
+        return $this->client->apiRequest(
+            'POST',
+            'oauth2/token',
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            $bodyData
+        );
+    }
+
+    /**
+     * @param string $clientSecret
+     * @param string $refreshToken
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function refreshToken(string $clientSecret, string $refreshToken)
+    {
+        $bodyData = sprintf(
+            'client_id=%s&client_secret=%s&grant_type=refresh_token&refresh_token=%s',
+            $this->client->getClientId(),
+            $clientSecret,
+            $refreshToken
+        );
+
+        return $this->client->apiRequest(
+            'POST',
+            'oauth2/token',
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            $bodyData
+        );
+    }
+
+    /**
+     * @param string $title
+     * @param string $trackFilePath
+     * @param string $description
+     * @param string $artworkFilePath
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function uploadTrack(string $title, string $trackFilePath, string $description = '', string $artworkFilePath = '')
+    {
+        if (!is_file($trackFilePath)) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $trackFilePath));
+        }
+
+        $size = filesize($trackFilePath);
+
+        if ($size > self::MAX_UPLOAD_SIZE) {
+            throw new SoundCloudAPIException(sprintf('The file \'%s\' should not exceed %d bytes, current size is %d bytes', $trackFilePath, self::MAX_UPLOAD_SIZE, $size));
+        }
+
+        $formFields = [
+            'track[title]' => $title,
+            'track[asset_data]' => DataPart::fromPath(realpath($trackFilePath)),
+            'track[description]' => $description
+        ];
+
+        if (!empty($artworkFilePath)) {
+            $formFields['track[artwork_data]'] = DataPart::fromPath(realpath($artworkFilePath));
+        }
+
+        $formData = new FormDataPart($formFields);
+
+        return $this->client->apiRequest(
+            'POST',
+            'tracks',
+            $formData->getPreparedHeaders()->toArray(),
+            $formData->bodyToIterable()
+        );
+    }
+
+    /**
+     * @param int $trackId
+     *
+     * @return array|object
+     *
+     * @throws SoundCloudAPIException
+     */
+    public function deleteTrack(int $trackId)
+    {
+        $url = sprintf('tracks/%d', $trackId);
+
+        return $this->client->apiRequest('DELETE', $url);
     }
 }

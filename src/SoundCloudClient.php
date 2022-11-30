@@ -229,7 +229,7 @@ class SoundCloudClient
      */
     protected function getDefaultHeaders(): array
     {
-        $headers = ['Accept' => 'application/json'];
+        $headers = ['accept' => 'application/json; charset=utf-8'];
 
         if (!empty($this->accessToken)) {
             $headers['Authorization'] = sprintf('OAuth %s', $this->accessToken);

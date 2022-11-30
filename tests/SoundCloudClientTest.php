@@ -76,7 +76,7 @@ class SoundCloudClientTest extends TestCase
         $callback = function ($method, $url, $options) {
             self::assertEquals('GET', $method);
             self::assertEquals('https://api.soundcloud.com/tracks?client_id=client.id', $url);
-            self::assertContains('Accept: application/json', $options['headers']);
+            self::assertContains('accept: application/json; charset=utf-8', $options['headers']);
 
             return new MockResponse('{}', ['http_code' => 201]);
         };
