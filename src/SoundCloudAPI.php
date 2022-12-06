@@ -15,7 +15,7 @@ class SoundCloudAPI
     /**
      * @param SoundCloudClient $client
      */
-    public function __construct(private SoundCloudClient $client)
+    public function __construct(readonly private SoundCloudClient $client)
     {
     }
 
@@ -45,7 +45,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function getUser(?int $userId = null)
+    public function getUser(?int $userId = null): object|array
     {
         $url = 'me';
 
@@ -67,7 +67,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function getTrack(int $trackId, ?string $secretToken = null)
+    public function getTrack(int $trackId, ?string $secretToken = null): object|array
     {
         $url = sprintf('tracks/%d', $trackId);
 
@@ -88,9 +88,9 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function getTracks(?int $userId = null)
+    public function getTracks(?int $userId = null): object|array
     {
-        $url = sprintf('me/tracks');
+        $url = 'me/tracks';
 
         if (null !== $userId) {
             $url = sprintf('users/%d/tracks', $userId);
@@ -106,7 +106,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function getStreamUrlsForTrack(int $trackId)
+    public function getStreamUrlsForTrack(int $trackId): object|array
     {
         $url = sprintf('tracks/%d/streams', $trackId);
 
@@ -120,7 +120,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function repostTrack(int $trackId)
+    public function repostTrack(int $trackId): object|array
     {
         $url = sprintf('e1/me/track_reposts/%d', $trackId);
 
@@ -134,7 +134,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function likeTrack(int $trackId)
+    public function likeTrack(int $trackId): object|array
     {
         $url = sprintf('e1/me/track_likes/%d', $trackId);
 
@@ -149,7 +149,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function commentOnTrack(int $trackId, string $comment)
+    public function commentOnTrack(int $trackId, string $comment): object|array
     {
         $url = sprintf('tracks/%d/comments', $trackId);
         $data = [
@@ -170,7 +170,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function followUser(int $userId)
+    public function followUser(int $userId): object|array
     {
         $url = sprintf('me/followings/%d', $userId);
 
@@ -187,7 +187,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function unFollowUser(int $userId)
+    public function unFollowUser(int $userId): object|array
     {
         $url = sprintf('me/followings/%d', $userId);
 
@@ -202,7 +202,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function getFollowings()
+    public function getFollowings(): object|array
     {
         return $this->client->apiRequest('GET', 'me/followings');
     }
@@ -217,7 +217,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function resolveUrl(string $url)
+    public function resolveUrl(string $url): object|array
     {
         $url = sprintf('resolve?url=%s', $url);
 
@@ -297,7 +297,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function authenticate(string $clientSecret)
+    public function authenticate(string $clientSecret): object|array
     {
         $bodyData = sprintf(
             'client_id=%s&client_secret=%s&grant_type=client_credentials',
@@ -323,7 +323,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function refreshToken(string $clientSecret, string $refreshToken)
+    public function refreshToken(string $clientSecret, string $refreshToken): object|array
     {
         $bodyData = sprintf(
             'client_id=%s&client_secret=%s&grant_type=refresh_token&refresh_token=%s',
@@ -352,7 +352,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function uploadTrack(string $title, string $trackFilePath, string $description = '', string $artworkFilePath = '')
+    public function uploadTrack(string $title, string $trackFilePath, string $description = '', string $artworkFilePath = ''): object|array
     {
         if (!is_file($trackFilePath)) {
             throw new SoundCloudAPIException(sprintf('The file \'%s\' could not be found', $trackFilePath));
@@ -391,7 +391,7 @@ class SoundCloudAPI
      *
      * @throws SoundCloudAPIException
      */
-    public function deleteTrack(int $trackId)
+    public function deleteTrack(int $trackId): object|array
     {
         $url = sprintf('tracks/%d', $trackId);
 
