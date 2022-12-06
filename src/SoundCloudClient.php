@@ -27,27 +27,27 @@ class SoundCloudClient
     /**
      * @var HttpClientInterface
      */
-    private $httpClient;
+    private HttpClientInterface $httpClient;
 
     /**
      * @var string
      */
-    private $accessToken = '';
+    private string $accessToken = '';
 
     /**
      * @var string
      */
-    private $clientId = '';
+    private string $clientId = '';
 
     /**
      * @var int
      */
-    protected $lastHttpStatusCode = 0;
+    protected int $lastHttpStatusCode = 0;
 
     /**
-     * @var
+     * @var int
      */
-    protected $responseType = self::RETURN_AS_OBJECT;
+    protected int $responseType = self::RETURN_AS_OBJECT;
 
     /**
      * SoundCloudClient constructor.
@@ -127,16 +127,16 @@ class SoundCloudClient
     }
 
     /**
-     * @param string                                      $method
-     * @param string                                      $service
-     * @param array                                       $headers
-     * @param array|string|resource|\Traversable|\Closure $body
+     * @param string $method
+     * @param string $service
+     * @param array  $headers
+     * @param mixed  $body
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function apiRequest($method, $service, array $headers = [], $body = null)
+    public function apiRequest(string $method, string $service, array $headers = [], mixed $body = null): object|array
     {
         $url = sprintf(
             '%s/%s',
@@ -175,16 +175,16 @@ class SoundCloudClient
     }
 
     /**
-     * @param string                                      $method
-     * @param string                                      $service
-     * @param array                                       $headers
-     * @param array|string|resource|\Traversable|\Closure $body
+     * @param string $method
+     * @param string $service
+     * @param array  $headers
+     * @param mixed  $body
      *
      * @return array|object
      *
      * @throws SoundCloudAPIException
      */
-    public function urlRequest(string $method, string $service, array $headers = [], $body = null): ?string
+    public function urlRequest(string $method, string $service, array $headers = [], mixed $body = null): ?string
     {
         $url = sprintf(
             '%s/%s',
