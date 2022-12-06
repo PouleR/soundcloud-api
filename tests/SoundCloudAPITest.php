@@ -66,10 +66,10 @@ class SoundCloudAPITest extends TestCase
             ->withConsecutive(
                 ['GET', 'me'],
                 ['GET', 'users/1234']
-            )->willReturn('{"OK"}');
+            )->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->getUser());
-        self::assertEquals('{"OK"}', $this->api->getUser(1234));
+        self::assertEquals(['OK'], $this->api->getUser());
+        self::assertEquals(['OK'], $this->api->getUser(1234));
     }
 
     /**
@@ -80,9 +80,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('GET', 'tracks/123')
-            ->willReturn('{"OK"}');
+            ->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->getTrack(123));
+        self::assertEquals(['OK'], $this->api->getTrack(123));
     }
 
     /**
@@ -93,9 +93,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('DELETE', 'tracks/789')
-            ->willReturn('{"OK"}');
+            ->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->deleteTrack(789));
+        self::assertEquals(['OK'], $this->api->deleteTrack(789));
     }
 
     /**
@@ -106,9 +106,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('GET', 'tracks/555/streams')
-            ->willReturn('{"OK"}');
+            ->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->getStreamUrlsForTrack(555));
+        self::assertEquals(['OK'], $this->api->getStreamUrlsForTrack(555));
     }
 
     /**
@@ -119,9 +119,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('GET', 'tracks/456?secret_token=unittest')
-            ->willReturn('{"OK"}');
+            ->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->getTrack(456, 'unittest'));
+        self::assertEquals(['OK'], $this->api->getTrack(456, 'unittest'));
     }
 
     /**
@@ -134,10 +134,10 @@ class SoundCloudAPITest extends TestCase
             ->withConsecutive(
                 ['GET', 'me/tracks'],
                 ['GET', 'users/4321/tracks']
-            )->willReturn('{"OK"}');
+            )->willReturn(['OK']);
 
-        self::assertEquals('{"OK"}', $this->api->getTracks());
-        self::assertEquals('{"OK"}', $this->api->getTracks(4321));
+        self::assertEquals(['OK'], $this->api->getTracks());
+        self::assertEquals(['OK'], $this->api->getTracks(4321));
     }
 
     /**
@@ -148,9 +148,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('PUT', 'e1/me/track_reposts/1337')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->repostTrack(1337));
+        self::assertEquals([], $this->api->repostTrack(1337));
     }
 
     /**
@@ -161,9 +161,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('PUT', 'e1/me/track_likes/555')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->likeTrack(555));
+        self::assertEquals([], $this->api->likeTrack(555));
     }
 
     /**
@@ -178,9 +178,9 @@ class SoundCloudAPITest extends TestCase
                 'tracks/123/comments',
                 [],
                 ['comment[body]' => 'Test', 'comment[timestamp]' => 0]
-            )->willReturn('{}');
+            )->willReturn([]);
 
-        self::assertEquals('{}', $this->api->commentOnTrack(123, 'Test'));
+        self::assertEquals([], $this->api->commentOnTrack(123, 'Test'));
     }
 
     /**
@@ -191,9 +191,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('PUT', 'me/followings/222')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->followUser(222));
+        self::assertEquals([], $this->api->followUser(222));
     }
 
     /**
@@ -204,9 +204,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('DELETE', 'me/followings/333')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->unFollowUser(333));
+        self::assertEquals([], $this->api->unFollowUser(333));
     }
 
     /**
@@ -217,9 +217,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('GET', 'me/followings')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->getFollowings());
+        self::assertEquals([], $this->api->getFollowings());
     }
 
     /**
@@ -230,9 +230,9 @@ class SoundCloudAPITest extends TestCase
         $this->client->expects(static::once())
             ->method('apiRequest')
             ->with('GET', 'resolve?url=https://soundcloud.com/test')
-            ->willReturn('{}');
+            ->willReturn([]);
 
-        self::assertEquals('{}', $this->api->resolveUrl('https://soundcloud.com/test'));
+        self::assertEquals([], $this->api->resolveUrl('https://soundcloud.com/test'));
     }
 
     /**
@@ -286,9 +286,9 @@ class SoundCloudAPITest extends TestCase
                 'oauth2/token',
                 ['Content-Type' => 'application/x-www-form-urlencoded'],
                 'client_id=&client_secret=secret&grant_type=client_credentials'
-            )->willReturn('{}');
+            )->willReturn([]);
 
-        self::assertEquals('{}', $this->api->authenticate('secret'));
+        self::assertEquals([], $this->api->authenticate('secret'));
     }
 
     /**
@@ -303,8 +303,8 @@ class SoundCloudAPITest extends TestCase
                 'oauth2/token',
                 ['Content-Type' => 'application/x-www-form-urlencoded'],
                 'client_id=&client_secret=secret&grant_type=refresh_token&refresh_token=refresh'
-            )->willReturn('{}');
+            )->willReturn([]);
 
-        self::assertEquals('{}', $this->api->refreshToken('secret', 'refresh'));
+        self::assertEquals([], $this->api->refreshToken('secret', 'refresh'));
     }
 }
