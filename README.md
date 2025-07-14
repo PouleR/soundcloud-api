@@ -3,7 +3,7 @@
 
 # SoundCloud API PHP
 
-This is a PHP wrapper for the [SoundCloud API](https://developers.soundcloud.com/docs/api/reference).
+This is a PHP wrapper for the [SoundCloud API](https://developers.soundcloud.com/docs/api/explorer/open-api).
 
 ## Requirements
 * PHP >=8.1
@@ -35,5 +35,4 @@ $api->setAccessToken('access.token');
 $api->getUser();
 
 var_dump($result);
-
 ```
