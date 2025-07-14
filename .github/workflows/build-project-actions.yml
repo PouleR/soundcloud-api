@@ -1,11 +1,13 @@
 name: Unit tests and checkstyle
 on: [push]
+env:
+  XDEBUG_MODE: "coverage"
 jobs:
   phpunit:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:

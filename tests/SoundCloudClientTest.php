@@ -23,7 +23,7 @@ class SoundCloudClientTest extends TestCase
         $apiClient = new SoundCloudClient($this->createMock(HttpClientInterface::class));
 
         $apiClient->setClientId('id');
-        self::assertEquals('id', $apiClient->getClientId());
+        self::assertSame('id', $apiClient->getClientId());
     }
 
     /**
@@ -34,7 +34,7 @@ class SoundCloudClientTest extends TestCase
         $apiClient = new SoundCloudClient($this->createMock(HttpClientInterface::class));
 
         $apiClient->setAccessToken('token');
-        self::assertEquals('token', $apiClient->getAccessToken());
+        self::assertSame('token', $apiClient->getAccessToken());
     }
 
     /**
@@ -43,10 +43,10 @@ class SoundCloudClientTest extends TestCase
     public function testResponseType(): void
     {
         $apiClient = new SoundCloudClient($this->createMock(HttpClientInterface::class));
-        self::assertEquals(SoundCloudClient::RETURN_AS_OBJECT, $apiClient->getResponseType());
+        self::assertSame(SoundCloudClient::RETURN_AS_OBJECT, $apiClient->getResponseType());
 
         $apiClient->setResponseType(SoundCloudClient::RETURN_AS_ASSOC);
-        self::assertEquals(SoundCloudClient::RETURN_AS_ASSOC, $apiClient->getResponseType());
+        self::assertSame(SoundCloudClient::RETURN_AS_ASSOC, $apiClient->getResponseType());
     }
 
     /**
@@ -74,8 +74,8 @@ class SoundCloudClientTest extends TestCase
     public function testAPIRequestClientId(): void
     {
         $callback = function ($method, $url, $options) {
-            self::assertEquals('GET', $method);
-            self::assertEquals('https://api.soundcloud.com/tracks?client_id=client.id', $url);
+            self::assertSame('GET', $method);
+            self::assertSame('https://api.soundcloud.com/tracks?client_id=client.id', $url);
             self::assertContains('accept: application/json; charset=utf-8', $options['headers']);
 
             return new MockResponse('{}', ['http_code' => 201]);
@@ -86,7 +86,7 @@ class SoundCloudClientTest extends TestCase
         $apiClient->setClientId('client.id');
 
         self::assertIsObject($apiClient->apiRequest('GET', 'tracks'));
-        self::assertEquals(201, $apiClient->getLastHttpStatusCode());
+        self::assertSame(201, $apiClient->getLastHttpStatusCode());
     }
 
 
@@ -96,8 +96,8 @@ class SoundCloudClientTest extends TestCase
     public function testAPIRequestAccessToken(): void
     {
         $callback = function ($method, $url, $options) {
-            self::assertEquals('GET', $method);
-            self::assertEquals('https://api.soundcloud.com/tracks', $url);
+            self::assertSame('GET', $method);
+            self::assertSame('https://api.soundcloud.com/tracks', $url);
             self::assertContains('Authorization: OAuth access.token', $options['headers']);
 
             return new MockResponse('{}', ['http_code' => 201]);
@@ -109,6 +109,6 @@ class SoundCloudClientTest extends TestCase
         $apiClient->setResponseType(SoundCloudClient::RETURN_AS_ASSOC);
 
         self::assertIsArray($apiClient->apiRequest('GET', 'tracks'));
-        self::assertEquals(201, $apiClient->getLastHttpStatusCode());
+        self::assertSame(201, $apiClient->getLastHttpStatusCode());
     }
 }
