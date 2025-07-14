@@ -1,5 +1,7 @@
 name: Unit tests and checkstyle
 on: [push]
+env:
+  XDEBUG_MODE: "coverage"
 jobs:
   phpunit:
     runs-on: ubuntu-latest
