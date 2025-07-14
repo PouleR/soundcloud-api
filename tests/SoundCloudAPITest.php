@@ -136,12 +136,20 @@ class SoundCloudAPITest extends TestCase
      */
     public function testGetTracks(): void
     {
-        $this->client->expects(static::exactly(2))
+        $matcher = static::exactly(2);
+
+        $expected1 = ['GET', 'me/tracks'];
+        $expected2 = ['GET', 'users/4321/tracks'];
+
+        $this->client->expects($matcher)
             ->method('apiRequest')
-            ->withConsecutive(
-                ['GET', 'me/tracks'],
-                ['GET', 'users/4321/tracks']
-            )->willReturn(['OK']);
+            ->willReturnCallback(function (string $key, string $value) use ($matcher,$expected1, $expected2) {
+                match ($matcher->numberOfInvocations()) {
+                    1 =>  $this->assertEquals($expected1, $value),
+                    2 =>  $this->assertEquals($expected2, $value),
+                };
+            })
+            ->willReturn(['OK']);
 
         self::assertEquals(['OK'], $this->api->getTracks());
         self::assertEquals(['OK'], $this->api->getTracks(4321));
